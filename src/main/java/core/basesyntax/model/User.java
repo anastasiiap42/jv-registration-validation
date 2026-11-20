@@ -2,11 +2,20 @@ package core.basesyntax.model;
 
 import java.util.Objects;
 
+import static java.lang.Integer.valueOf;
+
 public class User {
     private Long id;
     private String login;
     private String password;
     private Integer age;
+
+    public User(Long id, String login, String password, Integer age) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.age = age;
+    }
 
     public Long getId() {
         return id;
