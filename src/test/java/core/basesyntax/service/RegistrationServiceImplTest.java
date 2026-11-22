@@ -1,5 +1,8 @@
 package core.basesyntax.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import core.basesyntax.dao.StorageDaoImpl;
 import core.basesyntax.db.Storage;
 import core.basesyntax.model.InvalidDataException;
@@ -8,9 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RegistrationServiceImplTest {
     private static final Long DEFAULT_USER_ID = 1L;
@@ -53,8 +53,8 @@ class RegistrationServiceImplTest {
 
     @Test
     void register_existingLogin_notOk() {
-    testUser.setLogin(DEFAULT_LOGIN);
-    assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
+        testUser.setLogin(DEFAULT_LOGIN);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
@@ -75,7 +75,6 @@ class RegistrationServiceImplTest {
         User result = registrationService.register(testUser);
         assertNotNull(storageDao.get(result.getLogin()));
     }
-
 
     @Test
     void register_loginEmpty_notOk() {
