@@ -1,5 +1,6 @@
 package core.basesyntax.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -15,9 +16,10 @@ import org.junit.jupiter.api.Test;
 class RegistrationServiceImplTest {
     private static final Long DEFAULT_USER_ID = 1L;
     private static final Long DEFAULT_NEW_USER_ID = 2L;
-    private static final String DEFAULT_LOGIN = "single";
-    private static final String TOO_SHORT_STRING = "too";
+    private static final String DEFAULT_LOGIN = "singleUser";
+    private static final String TOO_SHORT_STRING = "short";
     private static final String LONG_ENOUGH_STRING = "notshort";
+    private static final String MINIMUM_LENGTH_LOGIN = "enough";
     private static final String DEFAULT_NEW_LOGIN = "newUser";
     private static final String DEFAULT_PASSWORD = "password";
     private static final String EMPTY_STRING = "";
@@ -49,12 +51,21 @@ class RegistrationServiceImplTest {
     void register_testUserData_ok() {
         User result = registrationService.register(testUser);
         assertNotNull(storageDao.get(result.getLogin()));
+        assertEquals(testUser, result);
     }
 
     @Test
     void register_existingLogin_notOk() {
         testUser.setLogin(DEFAULT_LOGIN);
         assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
+    }
+
+    @Test
+    void register_minimumLengthLogin_ok() {
+        testUser.setLogin(MINIMUM_LENGTH_LOGIN);
+        User result = registrationService.register(testUser);
+        assertNotNull(storageDao.get(result.getLogin()));
+        assertEquals(testUser, result);
     }
 
     @Test
@@ -74,6 +85,7 @@ class RegistrationServiceImplTest {
         testUser.setLogin(LONG_ENOUGH_STRING);
         User result = registrationService.register(testUser);
         assertNotNull(storageDao.get(result.getLogin()));
+        assertEquals(testUser, result);
     }
 
     @Test
@@ -117,6 +129,7 @@ class RegistrationServiceImplTest {
         testUser.setAge(BORDERLINE_AGE);
         User result = registrationService.register(testUser);
         assertNotNull(storageDao.get(result.getLogin()));
+        assertEquals(testUser, result);
     }
 
     @Test

@@ -6,8 +6,8 @@ import core.basesyntax.model.InvalidDataException;
 import core.basesyntax.model.User;
 
 public class RegistrationServiceImpl implements RegistrationService {
-    private static final int MAX_LOGIN_LENGTH = 6;
-    private static final int MAX_PASSWORD_LENGTH = 6;
+    private static final int MIN_LOGIN_LENGTH = 6;
+    private static final int MIN_PASSWORD_LENGTH = 6;
     private static final int MIN_AGE = 18;
     private final StorageDao storageDao = new StorageDaoImpl();
 
@@ -20,12 +20,17 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (storageDao.get(userLogin) != null) {
             throw new InvalidDataException("User with this login already exists."
                     + " Cannot register user");
-        } else if (userLogin == null || userLogin.length() < MAX_LOGIN_LENGTH) {
-            throw new InvalidDataException("Invalid login. Cannot register user");
-        } else if (user.getPassword() == null
-                || user.getPassword().length() < MAX_PASSWORD_LENGTH) {
+        } else if (userLogin == null) {
+            throw new InvalidDataException("Login cannot be null. Cannot register user");
+        } else if ( userLogin.length() < MIN_LOGIN_LENGTH) {
+            throw new InvalidDataException("Login is too short. Cannot register user");
+        } else if (user.getPassword() == null) {
+            throw new InvalidDataException("Password cannot be null. Cannot register user");
+        } else if (user.getPassword().length() < MIN_PASSWORD_LENGTH) {
             throw new InvalidDataException("Invalid password. Cannot register user");
-        } else if (user.getAge() == null || user.getAge() < MIN_AGE) {
+        } else if (user.getAge() == null) {
+            throw new InvalidDataException("Age cannot be null. Cannot register user");
+        } else if (user.getAge() < MIN_AGE) {
             throw new InvalidDataException("Invalid age. Cannot register user.");
         }
         storageDao.add(user);
