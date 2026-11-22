@@ -1,8 +1,6 @@
 package core.basesyntax.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import core.basesyntax.dao.StorageDaoImpl;
 import core.basesyntax.db.Storage;
 import core.basesyntax.model.InvalidDataException;
 import core.basesyntax.model.User;
@@ -11,20 +9,35 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class RegistrationServiceImplTest {
+    private static final Long DEFAULT_USER_ID = 1L;
+    private static final Long DEFAULT_NEW_USER_ID = 2L;
+    private static final String DEFAULT_LOGIN = "single";
+    private static final String TOO_SHORT_STRING = "too";
+    private static final String LONG_ENOUGH_STRING = "notshort";
+    private static final String DEFAULT_NEW_LOGIN = "newUser";
+    private static final String DEFAULT_PASSWORD = "password";
+    private static final String EMPTY_STRING = "";
+    private static final Integer DEFAULT_AGE = 19;
+    private static final Integer UNDERAGE = 17;
+    private static final Integer BORDERLINE_AGE = 18;
     private static RegistrationService registrationService;
+    private static StorageDaoImpl storageDao;
+    private static User testUser;
 
     @BeforeAll
     static void beforeAll() {
         registrationService = new RegistrationServiceImpl();
+        storageDao = new StorageDaoImpl();
     }
 
     @BeforeEach
     void setUp() {
-        Storage.people.add(new User(1L, "firstUser", "somePassword", 19));
-        Storage.people.add(new User(2L, "secondUser", "somePassword", 30));
-        Storage.people.add(new User(3L, "thirdUser", "somePassword", 19));
-        Storage.people.add(new User(4L, "forthUser", "somePassword", 101));
+        Storage.people.add(new User(DEFAULT_USER_ID, DEFAULT_LOGIN, DEFAULT_PASSWORD, DEFAULT_AGE));
+        testUser = new User(DEFAULT_NEW_USER_ID, DEFAULT_NEW_LOGIN, DEFAULT_PASSWORD, DEFAULT_AGE);
     }
 
     @Test
@@ -33,80 +46,88 @@ class RegistrationServiceImplTest {
     }
 
     @Test
-    void register_validUserData_ok() {
-        User newUser = new User(5L, "fifthUser", "123456", 19);
-        User result = registrationService.register(newUser);
-        assertEquals(newUser, result);
+    void register_testUserData_ok() {
+        User result = registrationService.register(testUser);
+        assertNotNull(storageDao.get(result.getLogin()));
     }
 
     @Test
     void register_existingLogin_notOk() {
-        User newUser = new User(6L, "firstUser", "123456", 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+    testUser.setLogin(DEFAULT_LOGIN);
+    assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_nullLogin_notOk() {
-        User newUser = new User(6L, null, "123456", 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setLogin(null);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_loginTooShort_notOk() {
-        User newUser = new User(6L, "login", "123456", 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setLogin(TOO_SHORT_STRING);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
+    void register_loginLongEnough_ok() {
+        testUser.setLogin(LONG_ENOUGH_STRING);
+        User result = registrationService.register(testUser);
+        assertNotNull(storageDao.get(result.getLogin()));
+    }
+
+
+    @Test
     void register_loginEmpty_notOk() {
-        User newUser = new User(6L, "", "123456", 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setLogin(EMPTY_STRING);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_passwordTooShort_notOk() {
-        User newUser = new User(6L, "sixthUser", "12345", 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setPassword(TOO_SHORT_STRING);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_passwordEmpty_notOk() {
-        User newUser = new User(6L, "seventhUser", "", 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setPassword(EMPTY_STRING);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_nullPassword_notOk() {
-        User newUser = new User(6L, "eighthUser", null, 19);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setPassword(null);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_ageTooLittle_notOk() {
-        User newUser = new User(6L, "ninthUser", "password", 17);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setAge(UNDERAGE);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_ageNegative_notOk() {
-        User newUser = new User(6L, "tenthUser", "password", -1);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setAge(-DEFAULT_AGE);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @Test
     void register_ageIsEighteen_ok() {
-        User newUser = new User(6L, "eleventhUser", "password", 18);
-        User result = registrationService.register(newUser);
-        assertEquals(newUser, result);
+        testUser.setAge(BORDERLINE_AGE);
+        User result = registrationService.register(testUser);
+        assertNotNull(storageDao.get(result.getLogin()));
     }
 
     @Test
     void register_nullAge_notOk() {
-        User newUser = new User(6L, "twelfthUser", "password", null);
-        assertThrows(InvalidDataException.class, () -> registrationService.register(newUser));
+        testUser.setAge(null);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
     @AfterEach
     void tearDown() {
+        Storage.people.clear();
     }
 }
