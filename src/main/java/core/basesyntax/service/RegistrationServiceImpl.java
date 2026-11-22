@@ -22,7 +22,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                     + " Cannot register user");
         } else if (userLogin == null) {
             throw new InvalidDataException("Login cannot be null. Cannot register user");
-        } else if ( userLogin.length() < MIN_LOGIN_LENGTH) {
+        } else if (userLogin.length() < MIN_LOGIN_LENGTH) {
             throw new InvalidDataException("Login is too short. Cannot register user");
         } else if (user.getPassword() == null) {
             throw new InvalidDataException("Password cannot be null. Cannot register user");
