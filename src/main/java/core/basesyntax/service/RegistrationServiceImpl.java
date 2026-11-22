@@ -18,8 +18,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         String userLogin = user.getLogin();
         if (storageDao.get(userLogin) != null) {
-            throw new InvalidDataException("User with this login already exists." +
-                    " Cannot register user");
+            throw new InvalidDataException("User with this login already exists."
+                    + " Cannot register user");
         } else if (userLogin == null || userLogin.length() < MAX_LOGIN_LENGTH) {
             throw new InvalidDataException("Invalid login. Cannot register user");
         } else if (user.getPassword() == null
