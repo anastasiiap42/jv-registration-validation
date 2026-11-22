@@ -2,8 +2,6 @@ package core.basesyntax.model;
 
 import java.util.Objects;
 
-import static java.lang.Integer.valueOf;
-
 public class User {
     private Long id;
     private String login;

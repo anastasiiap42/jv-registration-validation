@@ -1,5 +1,9 @@
 package core.basesyntax.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import core.basesyntax.db.Storage;
 import core.basesyntax.model.InvalidDataException;
 import core.basesyntax.model.User;
@@ -7,8 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RegistrationServiceImplTest {
     private static RegistrationService registrationService;
@@ -34,7 +36,8 @@ class RegistrationServiceImplTest {
     @Test
     void register_validUserData_ok() {
         User newUser = new User(5L, "fifthUser", "123456", 19);
-        assertNotNull(newUser.getAge());
+        User result = registrationService.register(newUser);
+        assertEquals(newUser, result);
     }
 
     @Test
@@ -108,15 +111,3 @@ class RegistrationServiceImplTest {
     void tearDown() {
     }
 }
-
-//        if (user == null) {
-//        throw new NullPointerException("User can't be null"); DONE
-//        }
-//String userLogin = user.getLogin();
-//        if (storageDao.get(userLogin) != null DONE || userLogin.length() < 6 DONE
-//        || user.getPassword().length() < 6 || user.getAge() < 18) {
-//        throw new InvalidDataException("User's data is invalid, cannot register user.");
-//        }
-//                storageDao.add(user);
-//        return user;
-//    }

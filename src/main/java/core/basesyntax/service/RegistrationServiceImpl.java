@@ -17,9 +17,11 @@ public class RegistrationServiceImpl implements RegistrationService {
             throw new InvalidDataException("User can't be null");
         }
         String userLogin = user.getLogin();
-        if (storageDao.get(userLogin) != null || userLogin == null || userLogin.length() < MAX_LOGIN_LENGTH) {
+        if (storageDao.get(userLogin) != null || userLogin == null
+                || userLogin.length() < MAX_LOGIN_LENGTH) {
             throw new InvalidDataException("Invalid login. Cannot register user");
-        } else if (user.getPassword() == null || user.getPassword().length() < MAX_PASSWORD_LENGTH) {
+        } else if (user.getPassword() == null
+                || user.getPassword().length() < MAX_PASSWORD_LENGTH) {
             throw new InvalidDataException("Invalid password. Cannot register user");
         } else if (user.getAge() == null || user.getAge() < MIN_AGE) {
             throw new InvalidDataException("Invalid age. Cannot register user.");
