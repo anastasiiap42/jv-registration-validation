@@ -17,7 +17,8 @@ class RegistrationServiceImplTest {
     private static final Long DEFAULT_USER_ID = 1L;
     private static final Long DEFAULT_NEW_USER_ID = 2L;
     private static final String DEFAULT_LOGIN = "singleUser";
-    private static final String TOO_SHORT_STRING = "short";
+    private static final String ONE_LETTER_TOO_SHORT_STRING = "short";
+    private static final String TOO_SHORT_STRING = "too";
     private static final String LONG_ENOUGH_STRING = "notshort";
     private static final String MINIMUM_LENGTH_LOGIN = "enough";
     private static final String DEFAULT_NEW_LOGIN = "newUser";
@@ -71,6 +72,12 @@ class RegistrationServiceImplTest {
     @Test
     void register_nullLogin_notOk() {
         testUser.setLogin(null);
+        assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
+    }
+
+    @Test
+    void register_loginOneLetterTooShort_notOk() {
+        testUser.setLogin(ONE_LETTER_TOO_SHORT_STRING);
         assertThrows(InvalidDataException.class, () -> registrationService.register(testUser));
     }
 
